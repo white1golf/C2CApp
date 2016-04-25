@@ -39,9 +39,7 @@ class C2CVisitor extends CBaseVisitor<Integer>
 		if(ctx.getParent() instanceof CParser.IncListContext)
 			for (int i=0; i< ctx.getChildCount(); i++)
 				sb.append(ctx.getChild(i).getText()+"\n");// Print IncList
-				//Put one more \n at the end of directiveList
-			sb.append("\n");
-		//test what's gonna chane
+
 		return super.visitDirectiveDefinition(ctx);//visitChildren(ctx);
 	}
 
@@ -56,6 +54,8 @@ class C2CVisitor extends CBaseVisitor<Integer>
 	}
 
 	@Override public Integer visitFunction(@NotNull CParser.FunctionContext ctx) {
+		sb.append("\n\n");
+/*		//이 코드들은 원래 스켈레톤 코드인데 이렇게 선언하면 함수선언시 넣어주는 인자를 제대로 출력하지 못하여 수정함.
 		for (int i=0; i < ctx.getChildCount(); i++)
 			if (ctx.getChild(i) instanceof TerminalNode) {
 				//함수의 타입과 이름 사이의 스페이스바 생성
@@ -63,8 +63,8 @@ class C2CVisitor extends CBaseVisitor<Integer>
 				sb.append(ctx.getChild(i).getText());        // Print Function without CompoundStmt
 				System.out.println(ctx.getChild(i).getText());
 			}
-		//test what's gonna change
-		ctx.depth();
+*/
+
 		return visitChildren(ctx);
 	}
 
@@ -132,7 +132,10 @@ class C2CVisitor extends CBaseVisitor<Integer>
 		//However it can be possible to have global variable such as int a = 1; at this depth level so it need to be fixed.
 		if(!(node.getParent().getParent().getParent() instanceof CParser.ProgramContext))
 			sb.append(node.getText()); 			// Print TerminalNode
-
+		else if(node.getParent() instanceof CParser.DeclarationContext)
+			sb.append(node.getText());
+		else if(node.getParent() instanceof CParser.FunctionContext)
+			sb.append(node.getText());
 		//case 후 띄어쓰기 표시
 		if(node.getText().compareTo("case") ==0) sb.append(" ");
 
